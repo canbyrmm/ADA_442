@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
@@ -18,6 +18,7 @@ from imblearn.over_sampling import SMOTE
 from scipy import stats
 from math import sqrt
 from sklearn.metrics import mean_squared_error
+
 
 @st.cache
 def load_data():
