@@ -14,7 +14,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
 from math import sqrt
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_squared_error, accuracy_score, classification_report, confusion_matrix
+
 
 from sklearn.ensemble import RandomForestClassifier
 
@@ -157,6 +158,7 @@ for model_name, model in models.items():
     rmse = sqrt(mean_squared_error(y_test, y_pred))
     
     st.write('Accuracy:', accuracy_score(y_test, y_pred))
+
     st.write('Classification Report:')
     st.text(classification_report(y_test, y_pred))
     st.write(f'{model_name} RMSE: {rmse:.2f}')
