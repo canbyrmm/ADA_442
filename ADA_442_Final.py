@@ -94,7 +94,6 @@ sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', square=True)
 # Display the plot in Streamlit
 st.pyplot(plt)
 
-
 # Remove one of two features that have a correlation higher than 0.9
 columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
 for i in range(correlation_matrix.shape[0]):
@@ -108,10 +107,9 @@ df = df[selected_columns]
 # Display the updated dataframe
 st.dataframe(df)
 
-
 # Split the dataframe into inputs (X) and output (y)
-X = df_clean.drop('y', axis=1)
-y = df_clean['y']
+X = df.drop('y', axis=1)
+y = df['y']
 
 # Train a RandomForestClassifier to get feature importances
 clf = RandomForestClassifier()
@@ -153,11 +151,6 @@ for model_name, model in models.items():
     st.write('Classification Report:')
     st.text(classification_report(y_test, y_pred))
     st.write(f'{model_name} RMSE: {rmse:.2f}')
-    
-    
-    
-# Split the data into a training set and a test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Oversample dataset with SMOTE to improve performance
 smote = SMOTE(random_state=42)
@@ -182,5 +175,4 @@ st.write("Confusion Matrix:")
 st.table(confusion_matrix(y_test, y_pred))
 st.write("Classification Report:")
 st.text(classification_report(y_test, y_pred))
-
 
