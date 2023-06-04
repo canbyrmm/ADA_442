@@ -47,38 +47,37 @@ numeric_cols = ['age', 'balance', 'duration', 'campaign', 'pdays', 'previous']
 z_scores = np.abs(stats.zscore(df[numeric_cols]))
 df = df[(z_scores < 3).all(axis=1)]
 
-# Map 'yes' and 'no' to 1 and 0 respectively
-df_clean['default'] = df_clean['default'].map({'yes': 1, 'no': 0})
-df_clean['housing'] = df_clean['housing'].map({'yes': 1, 'no': 0})
-df_clean['loan'] = df_clean['loan'].map({'yes': 1, 'no': 0})
-df_clean['y'] = df_clean['y'].map({'yes': 1, 'no': 0})
+# Encode categorical variables
+df['default'] = df['default'].map({'yes': 1, 'no': 0})
+df['housing'] = df['housing'].map({'yes': 1, 'no': 0})
+df['loan'] = df['loan'].map({'yes': 1, 'no': 0})
+df['y'] = df['y'].map({'yes': 1, 'no': 0})
 
 # Display the updated dataframe
-st.write(df_clean.head())
+st.write(df.head())
 
 # Dump unnnecessery rows
-df_clean = pd.get_dummies(df_clean, columns=['job', 'marital', 'education', 'contact', 'month'])
+df = pd.get_dummies(df, columns=['job', 'marital', 'education', 'contact', 'month'])
 
 # Display the updated dataframe
-st.write(df_clean.head())
+st.write(df.head())
 
 # Check for duplicate rows
-duplicates = df_clean.duplicated().sum()
+duplicates = df.duplicated().sum()
 
 # Display the number of duplicate rows
 st.write(f"Number of duplicate rows: {duplicates}")
 
 # Get dataframe info
 buffer = io.StringIO()
-df_clean.info(buf=buffer)
+df.info(buf=buffer)
 s = buffer.getvalue()
 
 # Display the dataframe info
 st.text(s)
 
-
 # Generate the correlation matrix
-correlation_matrix = df_clean.corr()
+correlation_matrix = df.corr()
 
 # Select specific rows and columns to display
 columns_to_display = ['age', 'default', 'balance', 'housing', 'loan', 'duration', 'campaign', 'pdays', 'previous', 'y']
@@ -87,14 +86,12 @@ correlation_matrix = correlation_matrix.loc[columns_to_display, columns_to_displ
 # Display the correlation matrix in the Streamlit app
 st.dataframe(correlation_matrix)
 
-
 # Plot heatmap
-plt.figure(figsize=(12,10))
-sns.heatmap(filtered_matrix, annot=True, cmap=plt.cm.CMRmap_r)
+plt.figure(figsize=(12, 10))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', square=True)
 
 # Display the plot in Streamlit
 st.pyplot(plt)
-
 
 # Remove one of two features that have a correlation higher than 0.9
 columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
