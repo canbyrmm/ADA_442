@@ -174,11 +174,12 @@ rfc.fit(X_resampled, y_resampled)
 y_pred = rfc.predict(X_test)
 auc_roc = metrics.roc_auc_score(y_test, y_pred)
 
-   # Display the results in Streamlit
-    st.write("Precision:", metrics.precision_score(y_test, y_pred))
-    st.write("Recall:", metrics.recall_score(y_test, y_pred))
-    st.write("F1 Score:", metrics.f1_score(y_test, y_pred))
-    auc_roc = metrics.roc_auc_score(y_test, y_pred)
-    st.write("AUC-ROC:", auc_roc)
-    st.write("Confusion Matrix:")
-    st.table(confusion_matrix(y_test, y_pred))
+# Display the results in Streamlit
+st.write("Precision:", metrics.precision_score(y_test, y_pred))
+st.write("Recall:", metrics.recall_score(y_test, y_pred))
+st.write("F1 Score:", metrics.f1_score(y_test, y_pred))
+auc_roc = metrics.roc_auc_score(y_test, y_pred)
+st.write("AUC-ROC:", auc_roc)
+st.write("Confusion Matrix:")
+st.table(confusion_matrix(y_test, y_pred)) 
+
