@@ -98,10 +98,10 @@ st.pyplot(plt)
 columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
 for i in range(correlation_matrix.shape[0]):
     for j in range(i+1, correlation_matrix.shape[0]):
-        if correlation_matrix.iloc[i,j] >= 0.9:
+        if correlation_matrix.iloc[i, j] >= 0.9:
             if columns[j]:
                 columns[j] = False
-selected_columns = df.columns[columns]
+selected_columns = correlation_matrix.columns[columns]
 df = df[selected_columns]
 
 # Display the updated dataframe
@@ -123,7 +123,7 @@ f_importances = pd.Series(importances, X.columns)
 f_importances.sort_values(ascending=False, inplace=True)
 
 # Plot the feature importances
-plt.figure(figsize=(16,9))
+plt.figure(figsize=(16, 9))
 f_importances.plot(kind='bar')
 plt.tight_layout()
 
@@ -175,4 +175,3 @@ st.write("Confusion Matrix:")
 st.table(confusion_matrix(y_test, y_pred))
 st.write("Classification Report:")
 st.text(classification_report(y_test, y_pred))
-
