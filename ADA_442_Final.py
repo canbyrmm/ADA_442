@@ -47,60 +47,141 @@ numeric_cols = ['age', 'balance', 'duration', 'campaign', 'pdays', 'previous']
 z_scores = np.abs(stats.zscore(df[numeric_cols]))
 df = df[(z_scores < 3).all(axis=1)]
 
-# Encode categorical variables
-df = pd.get_dummies(df, drop_first=True)
+# Map 'yes' and 'no' to 1 and 0 respectively
+df_clean['default'] = df_clean['default'].map({'yes': 1, 'no': 0})
+df_clean['housing'] = df_clean['housing'].map({'yes': 1, 'no': 0})
+df_clean['loan'] = df_clean['loan'].map({'yes': 1, 'no': 0})
+df_clean['y'] = df_clean['y'].map({'yes': 1, 'no': 0})
 
-# Split the dataset into features and target variable
-X = df.drop('y_yes', axis=1)
-y = df['y_yes']
+# Display the updated dataframe
+st.write(df_clean.head())
 
-# Oversample the minority class using SMOTE
-smote = SMOTE(random_state=42)
-X_resampled, y_resampled = smote.fit_resample(X, y)
+# Dump unnnecessery rows
+df_clean = pd.get_dummies(df_clean, columns=['job', 'marital', 'education', 'contact', 'month'])
 
-# Train a random forest classifier
-rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
-rf_classifier.fit(X_resampled, y_resampled)
+# Display the updated dataframe
+st.write(df_clean.head())
 
-# Make predictions on the test set
-y_pred = rf_classifier.predict(X)
+# Check for duplicate rows
+duplicates = df_clean.duplicated().sum()
 
-# Evaluate the model
-accuracy = accuracy_score(y, y_pred)
-classification_report = classification_report(y, y_pred)
-confusion_mat = confusion_matrix(y, y_pred)
+# Display the number of duplicate rows
+st.write(f"Number of duplicate rows: {duplicates}")
 
-# Display the evaluation results
-st.subheader("Model Evaluation")
-st.write("Accuracy:", accuracy)
-st.write("Classification Report:")
-st.write(classification_report)
-st.write("Confusion Matrix:")
-st.write(confusion_mat)
+# Get dataframe info
+buffer = io.StringIO()
+df_clean.info(buf=buffer)
+s = buffer.getvalue()
 
-# Feature Importance
-st.subheader("Feature Importance")
+# Display the dataframe info
+st.text(s)
 
-# Get feature importances from the random forest classifier
-importances = rf_classifier.feature_importances_
-feature_names = X.columns
 
-# Create a pandas DataFrame for feature importances
-feature_importances = pd.DataFrame({'Feature': feature_names, 'Importance': importances})
+# Generate the correlation matrix
+correlation_matrix = df_clean.corr()
 
-# Sort the DataFrame by feature importance
-feature_importances = feature_importances.sort_values('Importance', ascending=False)
+# Select specific rows and columns to display
+columns_to_display = ['age', 'default', 'balance', 'housing', 'loan', 'duration', 'campaign', 'pdays', 'previous', 'y']
+correlation_matrix = correlation_matrix.loc[columns_to_display, columns_to_display]
 
-# Create a bar plot of feature importances
-plt.figure(figsize=(12, 8))
-sns.barplot(x='Importance', y='Feature', data=feature_importances)
-plt.title("Feature Importance")
-plt.xlabel("Importance")
-plt.ylabel("Feature")
-plt.tight_layout()
+# Display the correlation matrix in the Streamlit app
+st.dataframe(correlation_matrix)
 
-# Display the feature importances plot
+
+# Plot heatmap
+plt.figure(figsize=(12,10))
+sns.heatmap(filtered_matrix, annot=True, cmap=plt.cm.CMRmap_r)
+
+# Display the plot in Streamlit
 st.pyplot(plt)
 
+
+# Remove one of two features that have a correlation higher than 0.9
+columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
+for i in range(correlation_matrix.shape[0]):
+    for j in range(i+1, correlation_matrix.shape[0]):
+        if correlation_matrix.iloc[i,j] >= 0.9:
+            if columns[j]:
+                columns[j] = False
+selected_columns = df_clean.columns[columns]
+df_clean = df_clean[selected_columns]
+
+# Display the updated dataframe
+st.dataframe(df_clean)
+
+
+# Split the dataframe into inputs (X) and output (y)
+X = df_clean.drop('y', axis=1)
+y = df_clean['y']
+
+# Train a RandomForestClassifier to get feature importances
+clf = RandomForestClassifier()
+clf.fit(X, y)
+importances = clf.feature_importances_
+
+# Create a series with the feature importances
+f_importances = pd.Series(importances, X.columns)
+
+# Sort the series by importance
+f_importances.sort_values(ascending=False, inplace=True)
+
+# Plot the feature importances
+plt.figure(figsize=(16,9))
+f_importances.plot(kind='bar')
+plt.tight_layout()
+
+# Display the plot in Streamlit
+st.pyplot(plt)
+
+# Define the models
+models = {
+    "Logistic Regression": LogisticRegression(),
+    "Random Forest": RandomForestClassifier(),
+    "Support Vector Machine": SVC(),
+    "Neural Network": MLPClassifier()
+}
+
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Loop through the models
+for model_name, model in models.items():
+    st.write(f"Training {model_name}...")
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    rmse = sqrt(mean_squared_error(y_test, y_pred))
+    st.write('Accuracy:', accuracy_score(y_test, y_pred))
+    st.write('Classification Report:')
+    st.text(classification_report(y_test, y_pred))
+    st.write(f'{model_name} RMSE: {rmse:.2f}')
+    
+    
+    
+# Split the data into a training set and a test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Oversample dataset with SMOTE to improve performance
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+
+# Use best parameters For our Dataset
+rfc = RandomForestClassifier(n_estimators=500, max_depth=30, min_samples_split=2,
+                             min_samples_leaf=1, max_features='auto', random_state=42)
+
+rfc.fit(X_resampled, y_resampled)
+
+y_pred = rfc.predict(X_test)
+auc_roc = metrics.roc_auc_score(y_test, y_pred)
+
+# Display the results in Streamlit
+st.write("Accuracy: ", accuracy_score(y_test, y_pred))
+st.write("Precision:", metrics.precision_score(y_test, y_pred))
+st.write("Recall:", metrics.recall_score(y_test, y_pred))
+st.write("F1 Score:", metrics.f1_score(y_test, y_pred))
+st.write("AUC-ROC:", auc_roc)
+st.write("Confusion Matrix:")
+st.table(confusion_matrix(y_test, y_pred))
+st.write("Classification Report:")
+st.text(classification_report(y_test, y_pred))
 
 
