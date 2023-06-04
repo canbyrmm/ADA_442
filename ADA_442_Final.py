@@ -11,6 +11,7 @@ from scipy import stats
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from imblearn.over_sampling import SMOTE
+import io
 
 # Set up Streamlit interface
 st.set_page_config(layout="wide")
