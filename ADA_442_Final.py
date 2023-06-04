@@ -1,24 +1,19 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-import streamlit as st
 import pandas as pd
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn import metrics
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
 from sklearn.neural_network import MLPClassifier
-from imblearn.over_sampling import SMOTE
-from scipy import stats
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-
+from sklearn import metrics
+from imblearn.over_sampling import SMOTE
+from scipy import stats
+import seaborn as sns
+import matplotlib.pyplot as plt
+import streamlit as st
 
 @st.cache
 def load_data():
@@ -39,15 +34,6 @@ def clean_data(df):
     df_clean['loan'] = df_clean['loan'].map({'yes': 1, 'no': 0})
     df_clean['y'] = df_clean['y'].map({'yes': 1, 'no': 0})
     df_clean = pd.get_dummies(df_clean, columns=['job', 'marital', 'education', 'contact', 'month'])
-    correlation_matrix = df_clean.corr()
-    columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
-    for i in range(correlation_matrix.shape[0]):
-        for j in range(i+1, correlation_matrix.shape[0]):
-            if correlation_matrix.iloc[i,j] >= 0.9:
-                if columns[j]:
-                    columns[j] = False
-    selected_columns = df_clean.columns[columns]
-    df_clean = df_clean[selected_columns]
     return df_clean
 
 def plot_importances(df_clean):
@@ -71,34 +57,26 @@ def train_and_predict(df_clean):
     X = df_clean.drop('y', axis=1)
     y = df_clean['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    smote = SMOTE(random_state=42)
-    X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
-    rfc = RandomForestClassifier(n_estimators=500, max_depth=30, min_samples_split=2, min_samples_leaf=1, max_features='auto', random_state=42)
-    rfc.fit(X_resampled, y_resampled)
-    y_pred = rfc.predict(X_test)
-    auc_roc = metrics.roc_auc_score(y_test, y_pred)
-    metrics_data = {
-        "Accuracy": accuracy_score(y_test, y_pred),
-        "Precision": metrics.precision_score(y_test, y_pred),
-        "Recall": metrics.recall_score(y_test, y_pred),
-        "F1 Score": metrics.f1_score(y_test, y_pred),
-        "AUC-ROC": auc_roc,
-        "Confusion Matrix": confusion_matrix(y_test, y_pred),
-        "Classification Report": classification_report(y_test, y_pred)
-    }
-    return metrics_data
+    for model_name, model in models.items():
+        st.write(f"Training {model_name}...")
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        rmse = sqrt(mean_squared_error(y_test, y_pred))
+        st.write('Accuracy:', accuracy_score(y_test, y_pred))
+        st.write(classification_report(y_test, y_pred))
+        st.write(f'{model_name} RMSE: {rmse:.2f}\n')
 
 def main():
-    st.title("Bank Marketing Data Analysis")
+    st.title("Bank Customer Data Analysis")
     df = load_data()
+    st.write("First 5 Records", df.head())
+    st.write("Data Information", df.info())
+    st.write("Data Descriptive Statistics", df.describe())
     df_clean = clean_data(df)
-    st.header("Feature Importances")
-    plot_importances(df_clean)
-    st.header("Model Training and Prediction Metrics")
-    metrics_data = train_and_predict(df_clean)
-    for key, value in metrics_data.items():
-        st.subheader(key)
-        st.write(value)
+    st.write("Cleaned First 5 Records", df_clean.head())
+    fig = plot_importances(df_clean)
+    st.pyplot(fig.figure)
+    train_and_predict(df_clean)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
