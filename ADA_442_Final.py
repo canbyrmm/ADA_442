@@ -94,6 +94,7 @@ sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', square=True)
 # Display the plot in Streamlit
 st.pyplot(plt)
 
+
 # Remove one of two features that have a correlation higher than 0.9
 columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
 for i in range(correlation_matrix.shape[0]):
@@ -101,11 +102,11 @@ for i in range(correlation_matrix.shape[0]):
         if correlation_matrix.iloc[i,j] >= 0.9:
             if columns[j]:
                 columns[j] = False
-selected_columns = df_clean.columns[columns]
-df_clean = df_clean[selected_columns]
+selected_columns = df.columns[columns]
+df = df[selected_columns]
 
 # Display the updated dataframe
-st.dataframe(df_clean)
+st.dataframe(df)
 
 
 # Split the dataframe into inputs (X) and output (y)
