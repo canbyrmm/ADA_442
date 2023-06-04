@@ -55,8 +55,7 @@ df.head()
 
 
 
-##unneccesery field with lots of unknown values
-
+# Unneccesary field with lots of unknown values
 df=df.drop(['poutcome'], axis=1)
 df.head()
 
@@ -75,8 +74,8 @@ st.title("Data Preprocessing")
 # Load the dataset
 df = ...  # Add appropriate code here to load the dataset
 
-# Drop unnecessary field with lots of unknown values
-df = df.drop(['poutcome'], axis=1)
+
+
 
 # Implement Z-score for handling outliers
 numeric_cols = ['age', 'balance', 'duration', 'campaign', 'pdays', 'previous']
