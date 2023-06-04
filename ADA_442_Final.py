@@ -1,26 +1,27 @@
+import streamlit as st
+from sklearn import metrics
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.svm import SVC
-from sklearn.neural_network import MLPClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
-from math import sqrt
-from sklearn.metrics import mean_squared_error
-from sklearn import metrics
-from imblearn.over_sampling import SMOTE
-from scipy import stats
 import seaborn as sns
 import matplotlib.pyplot as plt
-import streamlit as st
+import warnings
+from scipy import stats
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score, classification_report
+from sklearn.neural_network import MLPClassifier
+from math import sqrt
+from sklearn.metrics import mean_squared_error
+from imblearn.over_sampling import SMOTE
 
-@st.cache
+warnings.filterwarnings('ignore')
+
 def load_data():
     df = pd.read_csv('bank-full.csv', delimiter=';', quotechar='"')
     return df
 
-@st.cache
 def clean_data(df):
     df['contact'].replace('unknown', df['contact'].mode()[0], inplace=True)
     df['poutcome'].replace('unknown', df['poutcome'].mode()[0], inplace=True)
@@ -57,9 +58,11 @@ def train_and_predict(df_clean):
     X = df_clean.drop('y', axis=1)
     y = df_clean['y']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    smote = SMOTE(random_state=42)
+    X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
     for model_name, model in models.items():
         st.write(f"Training {model_name}...")
-        model.fit(X_train, y_train)
+        model.fit(X_resampled, y_resampled)
         y_pred = model.predict(X_test)
         rmse = sqrt(mean_squared_error(y_test, y_pred))
         st.write('Accuracy:', accuracy_score(y_test, y_pred))
@@ -67,10 +70,8 @@ def train_and_predict(df_clean):
         st.write(f'{model_name} RMSE: {rmse:.2f}\n')
 
 def main():
-    st.title("Bank Customer Data Analysis")
+    st.title("Bank Marketing Dataset Analysis")
     df = load_data()
-    st.write("First 5 Records", df.head())
-    st.write("Data Information", df.info())
     st.write("Data Descriptive Statistics", df.describe())
     df_clean = clean_data(df)
     st.write("Cleaned First 5 Records", df_clean.head())
