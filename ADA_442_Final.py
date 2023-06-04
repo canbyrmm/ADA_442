@@ -21,16 +21,17 @@ import streamlit as st
 
 # In[23]:
 
-
+# Load the dataset
 df = pd.read_csv('bank-full.csv', delimiter=';', quotechar='"')
 
 
 # In[24]:
 
 
-df.head() ;
-df.info();
-df.describe()
+# Check the dataframe information
+st.write("Original Dataset Information:")
+st.write(df.info())
+
 
 
 # In[4]:
@@ -55,10 +56,8 @@ df.head()
 
 
 
-# Unneccesary field with lots of unknown values
-df=df.drop(['poutcome'], axis=1)
-df.head()
-
+# Drop unnecessary field with lots of unknown values
+df = df.drop(['poutcome'], axis=1)
 
 # In[27]:
 
@@ -94,6 +93,7 @@ df_clean['y'] = df_clean['y'].map({'yes': 1, 'no': 0})
 # Drop unnecessary rows
 df_clean = pd.get_dummies(df_clean, columns=['job', 'marital', 'education', 'contact', 'month'])
 
+
 # Check for duplicate values
 duplicate_count = df_clean.duplicated().sum()
 
@@ -109,7 +109,6 @@ rows_to_display = ['age', 'default', 'balance', 'housing', 'loan', 'duration', '
 # Display correlation matrix
 st.write("Correlation Matrix:")
 st.write(correlation_matrix.loc[rows_to_display, columns_to_display])
-
 
 # In[35]:
 
