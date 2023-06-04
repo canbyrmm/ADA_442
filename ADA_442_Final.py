@@ -11,7 +11,12 @@ from scipy import stats
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from imblearn.over_sampling import SMOTE
-import io
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import mean_squared_error
+from math import sqrt
 
 # Set up Streamlit interface
 st.set_page_config(layout="wide")
@@ -57,7 +62,7 @@ df['y'] = df['y'].map({'yes': 1, 'no': 0})
 # Display the updated dataframe
 st.write(df.head())
 
-# Dump unnnecessery rows
+# Dump unnecessary rows
 df = pd.get_dummies(df, columns=['job', 'marital', 'education', 'contact', 'month'])
 
 # Display the updated dataframe
@@ -101,7 +106,7 @@ for i in range(correlation_matrix.shape[0]):
         if correlation_matrix.iloc[i, j] >= 0.9:
             if columns[j]:
                 columns[j] = False
-selected_columns = correlation_matrix.columns[columns]
+selected_columns = df.columns[columns]
 df = df[selected_columns]
 
 # Display the updated dataframe
@@ -175,3 +180,4 @@ st.write("Confusion Matrix:")
 st.table(confusion_matrix(y_test, y_pred))
 st.write("Classification Report:")
 st.text(classification_report(y_test, y_pred))
+
