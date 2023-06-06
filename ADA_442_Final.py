@@ -184,8 +184,7 @@ def bank_prediction(input_data):
     # code for Prediction
     pred = ''
 
-    final_list = [age, default, balance, housing, loan, day,duration, campaign, pdays, previous] +
-    job_list + marital_list + education_list + contact_list + month_list
+    final_list = [age, default, balance, housing, loan, day,duration, campaign, pdays, previous] + job_list + marital_list + education_list + contact_list + month_list
 
     if st.button('Will subscribe?'):
         pred = bank_prediction(final_list)
