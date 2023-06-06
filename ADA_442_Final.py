@@ -26,7 +26,6 @@ st.set_page_config(layout="wide")
 st.title("Bank Marketing Data Analysis")
 
 
-
 # DONT FORGET TO CHANGE PATH
 loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
 
@@ -49,8 +48,7 @@ def bank_prediction(input_data):
         print('The client will subscribe a term deposit')
 
 def main():
-    # giving a title
-
+    
 
     # getting the input data from the user
 
@@ -183,7 +181,7 @@ def main():
     if st.button('Will subscribe?'):
         pred = bank_prediction(final_list)
 
-    st.success(pred)
+   # st.success(pred)
 
 
 if __name__ == '__main__':
