@@ -2,6 +2,7 @@
 ## coding: utf-8
 
 # In[22]:
+import pickle
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -16,7 +17,6 @@ from sklearn import metrics
 from math import sqrt
 from sklearn.metrics import mean_squared_error, accuracy_score, classification_report, confusion_matrix
 
-
 from sklearn.ensemble import RandomForestClassifier
 
 from imblearn.over_sampling import SMOTE
@@ -28,17 +28,9 @@ st.title("Bank Marketing Data Analysis")
 st.title("Subscriber Predictor Web App")
 
 # DONT FORGET TO CHANGE PATH
-#loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
+loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
 
-# get the current path
-current_path = Path(__file__).parent
 
-# create the full path to the model
-model_path = current_path / "C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav"
-
-# load the model
-with open(model_path, 'rb') as f:
-    loaded_model = pickle.load(f)
 
 
 def bank_prediction(input_data):
@@ -56,62 +48,59 @@ def bank_prediction(input_data):
     else:
         print('The client will subscribe a term deposit')
 
-
-#def main():
+def main():
     # giving a title
-    #st.title('Diabetes Prediction Web App')
+    st.title("Diabetes Prediction Web App")
 
     # getting the input data from the user
 
     age = st.text_input('Age')
-#------------------------------------------------
+    # ------------------------------------------------
     defaultst = st.radio(
         "Default",
         options=["yes", "no"],
     )
 
-    default
+    
     if (defaultst == "yes"):
         default = 1
     else:
         default = 0
-#-----------------------------------------------------
+    # -----------------------------------------------------
     balance = st.text_input('Balance')
     housingst = st.radio(
         "Housing",
         options=["yes", "no"],
     )
 
-    housing
+
     if (housingst == "yes"):
         housing = 1
     else:
         housing = 0
-#---------------------------------------------------------
+    # ---------------------------------------------------------
     loanst = st.radio(
         "Loan",
         options=["yes", "no"],
     )
-    loan
+    
     if (loanst == "yes"):
         loan = 1
     else:
         loan = 0
-#--------------------------------------------------------------
+    # --------------------------------------------------------------
     day = st.text_input('Day')
     duration = st.text_input('Duration')
     campaign = st.text_input('Campaign')
-    pdays = st.text_input('Pdays??')
+    pdays = st.text_input('Pay Days')
     previous = st.text_input('Previous')
-    job = st.text_input('Diabetes Pedigree Function value')
 
-#-----------------------------------------------------------------
+    # -----------------------------------------------------------------
     job = st.selectbox(
         "Job",
-        ("admin", "blue-collar", "enrepreneur", "housmaid", "management", "retired","self-employed","student",
-         "technician", "unemployed", "unknown"),
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled, )
+        ("admin", "blue-collar", "enrepreneur", "housmaid", "management", "retired", "self-employed", "student",
+         "technician", "unemployed", "unknown")
+    )
 
     jobs = [
         'admin', 'blue-collar', 'entrepreneur', 'housemaid', 'management',
@@ -119,20 +108,19 @@ def bank_prediction(input_data):
     ]
 
     if job in jobs:
-    # Create the list with all zeros
-        job_list = [0] * 11
+        # Create the list with all zeros
+        job_list = [0] * 12
 
     # Find the index of the selected job
     selected_job_index = jobs.index(job)
 
     # Set the value of the selected job's index to 1
     job_list[selected_job_index] = 1
-#--------------------------------------------------------------------------------
+    # --------------------------------------------------------------------------------
     marital = st.selectbox(
         "Marital",
-        ("divorced", "married", "single" ),
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled,)
+        ("divorced", "married", "single")
+         )
 
     marital_statuses = ["divorced", "married", "single"]
     if marital in marital_statuses:
@@ -140,15 +128,13 @@ def bank_prediction(input_data):
     selected_status_index = marital_statuses.index(marital)
 
     # Set the value of the selected marital status's index to 1
-    result_list[selected_status_index] = 1
+    marital_list[selected_status_index] = 1
 
-    #-------------------------------------------------------------------
+    # -------------------------------------------------------------------
     education = st.selectbox(
         "Education",
-        ("primary", "secondary", "tertiary", "unknown"),
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled, )
-        
+        ("primary", "secondary", "tertiary", "unknown")
+    )
 
     education_levels = ["primary", "secondary", "tertiary", "unknown"]
 
@@ -158,13 +144,11 @@ def bank_prediction(input_data):
         selected_education_index = education_levels.index(education)
         education_list[selected_education_index] = 1
 
-    #---------------------------------------------
+    # ---------------------------------------------
     contact = st.selectbox(
         "Contact",
-        ("cellular", "telephone"),
-        label_visibility=st.session_state.visibility,
-        disabled=st.session_state.disabled, )
-    
+        ("cellular", "telephone") )
+
     contact_types = ["cellular", "telephone"]
 
     if contact in contact_types:
@@ -172,29 +156,29 @@ def bank_prediction(input_data):
 
     selected_contact_index = contact_types.index(contact)
     contact_list[selected_contact_index] = 1
-    #--------------------------------------------------------------------
+    # --------------------------------------------------------------------
     month = st.selectbox(
         "Month",
-        ("January", "February", "March", "April", "May", "June","July",  "August", "September",
-         "October", "November", "December"),
-        label_visibility = st.session_state.visibility,
-        disabled = st.session_state.disabled, )
+        ("January", "February", "March", "April", "May", "June", "July", "August", "September",
+         "October", "November", "December")
+    )
 
     months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October',
               'November', 'December']
 
     if month in months:
-    # Create the list with all zeros
+        # Create the list with all zeros
         month_list = [0] * 12
     # Find the index of the selected month
     selected_month_index = months.index(month)
     # Set the value of the selected month's index to 1
     month_list[selected_month_index] = 1
-#-------------------------------------------------------------
+    # -------------------------------------------------------------
     # code for Prediction
     pred = ''
 
-    final_list = [age, default, balance, housing, loan, day,duration, campaign, pdays, previous] + job_list + marital_list + education_list + contact_list + month_list
+    final_list = [age, default, balance, housing, loan, day, duration, campaign, pdays,
+                  previous] + job_list + marital_list + education_list + contact_list + month_list
 
     if st.button('Will subscribe?'):
         pred = bank_prediction(final_list)
@@ -202,14 +186,14 @@ def bank_prediction(input_data):
     st.success(pred)
 
 
-#if __name__ == '__main__':
-#    main()
+if __name__ == '__main__':
+ main()
 
 # Set up Streamlit interface
 
 
 # Load the dataset
-df = pd.read_csv('bank-full.csv', delimiter=';', quotechar='"')
+df = pd.read_csv('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/bank-full.csv', delimiter=';', quotechar='"')
 
 # Display the dataset
 st.write("Original Dataset:")
@@ -290,7 +274,7 @@ st.pyplot(plt)
 # Remove one of two features that have a correlation higher than 0.9
 columns = np.full((correlation_matrix.shape[0],), True, dtype=bool)
 for i in range(correlation_matrix.shape[0]):
-    for j in range(i+1, correlation_matrix.shape[0]):
+    for j in range(i + 1, correlation_matrix.shape[0]):
         if correlation_matrix.iloc[i, j] >= 0.9:
             if columns[j]:
                 columns[j] = False
@@ -323,7 +307,7 @@ plt.tight_layout()
 # Display the plot in Streamlit
 st.pyplot(plt)
 
-"""
+
 # Define the models
 models = {
     "Logistic Regression": LogisticRegression(),
@@ -341,13 +325,13 @@ for model_name, model in models.items():
     model.fit(X_train, y_train)
     y_pred = model.predict(X_test)
     rmse = sqrt(mean_squared_error(y_test, y_pred))
-    
+
     st.write('Accuracy:', accuracy_score(y_test, y_pred))
 
     st.write('Classification Report:')
     st.text(classification_report(y_test, y_pred))
     st.write(f'{model_name} RMSE: {rmse:.2f}')
-"""
+
 
 # Oversample dataset with SMOTE to improve performance
 smote = SMOTE(random_state=42)
@@ -369,5 +353,4 @@ st.write("F1 Score:", metrics.f1_score(y_test, y_pred))
 auc_roc = metrics.roc_auc_score(y_test, y_pred)
 st.write("AUC-ROC:", auc_roc)
 st.write("Confusion Matrix:")
-st.table(confusion_matrix(y_test, y_pred)) 
-
+st.table(confusion_matrix(y_test, y_pred))
