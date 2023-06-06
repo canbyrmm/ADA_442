@@ -154,7 +154,7 @@ def bank_prediction(input_data):
         ("cellular", "telephone"),
         label_visibility=st.session_state.visibility,
         disabled=st.session_state.disabled, )
-    )
+    
     contact_types = ["cellular", "telephone"]
 
     if contact in contact_types:
