@@ -25,7 +25,7 @@ import io
 st.set_page_config(layout="wide")
 st.title("Bank Marketing Data Analysis")
 
-st.title("Subscriber Predictor Web App")
+
 
 # DONT FORGET TO CHANGE PATH
 loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
@@ -50,7 +50,7 @@ def bank_prediction(input_data):
 
 def main():
     # giving a title
-    st.title("Diabetes Prediction Web App")
+
 
     # getting the input data from the user
 
