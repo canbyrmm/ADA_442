@@ -138,7 +138,7 @@ def bank_prediction(input_data):
         ("primary", "secondary", "tertiary", "unknown"),
         label_visibility=st.session_state.visibility,
         disabled=st.session_state.disabled, )
-        )
+        
 
     education_levels = ["primary", "secondary", "tertiary", "unknown"]
 
