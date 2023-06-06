@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 
 # loading the saved model
-loaded_model = pickle.load(open('C:\\Users\\canby\\OneDrive\\Masaüstü\\ADA_442-main\\trained_model.sav', 'rb'))
+loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
 
 input_data = (5,166,72,19,175,25.8,0.587,51,2,5,166,72,19,175,25.8,0.587,51,2,5,166,72,19,175,25.8,2,3,2,2,0.587,51,2,5,166,72,19,175,25.8,0.587,51,2,2,3,2)
 
