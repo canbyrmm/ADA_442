@@ -66,7 +66,7 @@ def bank_prediction(input_data):
     else:
         default = 0
 #-----------------------------------------------------
-    balance = st.text_input('Balance)
+    balance = st.text_input('Balance')
     housingst = st.radio(
         "Housing",
         options=["yes", "no"],
