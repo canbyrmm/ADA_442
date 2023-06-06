@@ -28,7 +28,17 @@ st.title("Bank Marketing Data Analysis")
 st.title("Subscriber Predictor Web App")
 
 # DONT FORGET TO CHANGE PATH
-loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
+#loaded_model = pickle.load(open('C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav', 'rb'))
+
+# get the current path
+current_path = Path(__file__).parent
+
+# create the full path to the model
+model_path = current_path / "C:/Users/canby/OneDrive/Masaüstü/ADA_442-main/trained_model.sav"
+
+# load the model
+with open(model_path, 'rb') as f:
+    loaded_model = pickle.load(f)
 
 
 def bank_prediction(input_data):
